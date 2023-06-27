@@ -1,0 +1,19 @@
+node {
+    def WORKSPACE = "/var/lib/jenkins/workspace/springboot-deploy"
+    def dockerImageTag = "dune-service${env.BUILD_NUMBER}"
+try{
+    stage('Git clone') {
+        // for display purposes
+        // Get some code from a GitHub repository
+        git url: 'https://github.com/tresata/dune-api.git',
+            credentialsId: 'dune-service-user',
+            branch: 'master'
+     }
+    stage('Building docker image') {
+         dockerImage = docker.build("dune-service:${env.BUILD_NUMBER}")
+    }
+}catch(e){
+    currentBuild.result = "FAILED"
+    throw e
+}
+}
